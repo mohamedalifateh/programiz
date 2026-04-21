@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Python Compiler (Interpreter) - Programiz</title>
+  <meta name="description" content="Write and run Python code online using this interactive compiler.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:#1a1f2e;color:#c9d1d9;}
+    button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit;}
+
+    .app{display:flex;flex-direction:column;height:100vh;width:100vw;}
+
+    /* === HEADER === */
+    .header{display:flex;align-items:center;justify-content:space-between;height:68px;min-height:68px;background:#1e2235;padding:0 20px 0 20px;position:relative;z-index:100;}
+    .header-left{display:flex;flex-direction:column;gap:1px;}
+    .header-logo{font-size:20px;font-weight:700;color:#fff;letter-spacing:0.2px;line-height:1.3;}
+    .header-logo .p-letter{font-style:italic;}
+    .header-subtitle{font-size:11px;color:#7c8496;font-weight:400;line-height:1.2;}
+
+    /* Ad Banner (center) */
+    .ad-banner{display:flex;align-items:center;background:#f5f0e6;border-radius:4px;padding:6px 16px;gap:14px;height:48px;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;}
+    .ad-image{height:40px;width:64px;border-radius:3px;flex-shrink:0;overflow:hidden;background:#1a1a2e;}
+    .ad-text-wrap{display:flex;flex-direction:column;gap:0;}
+    .ad-headline{font-size:13px;font-weight:700;color:#1a1a1a;}
+    .ad-subtext{font-size:10px;color:#555;line-height:1.3;}
+    .ad-cta{padding:5px 14px;background:#1a73e8;color:#fff;border-radius:20px;font-size:11px;font-weight:600;flex-shrink:0;}
+    .ad-brand{display:flex;flex-direction:column;align-items:flex-end;gap:0;margin-left:4px;}
+    .ad-brand-name{font-size:15px;font-weight:700;color:#e60012;line-height:1.2;}
+    .ad-brand-product{font-size:10px;color:#222;font-weight:600;line-height:1.2;}
+    .ad-close-btn{position:absolute;top:1px;right:4px;font-size:9px;color:#aaa;cursor:pointer;background:none;border:none;padding:2px;}
+    .ad-info{position:absolute;top:1px;left:4px;font-size:8px;color:#aaa;display:flex;align-items:center;gap:2px;}
+
+    .pro-btn{display:flex;align-items:center;gap:4px;padding:8px 16px;border:1px solid #474d56;border-radius:8px;color:#fff;font-size:13px;font-weight:600;background:transparent;transition:background .2s;}
+    .pro-btn:hover{background:#21262d;}
+
+    /* Discrete code buttons */
+    .header-right{display:flex;align-items:center;gap:6px;}
+    .code-paste-btn{width:22px;height:22px;border-radius:4px;background:rgba(255,255,255,0.06);color:#4a5068;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .15s,color .15s;}
+    .code-paste-btn:hover{background:rgba(255,255,255,0.12);color:#8b949e;}
+
+    /* === MAIN BODY === */
+    .main-body{display:flex;flex:1;overflow:hidden;}
+
+    /* === SIDEBAR === */
+    .sidebar{width:48px;min-width:48px;background:#1e2235;display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:0;overflow-y:auto;scrollbar-width:none;border-right:1px solid rgba(255,255,255,0.05);}
+    .sidebar::-webkit-scrollbar{display:none;}
+    .sidebar-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;flex-shrink:0;margin:1px 0;}
+    .sidebar-icon:hover{background:rgba(255,255,255,0.08);}
+    .sidebar-icon.active{background:#2563eb;}
+    .sidebar-icon svg{width:20px;height:20px;}
+    .sidebar-icon .il{font-size:10px;font-weight:700;color:#5c6370;user-select:none;letter-spacing:-0.3px;}
+    .sidebar-icon.active .il{color:#fff;}
+
+    /* === WORKSPACE === */
+    .workspace{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .panels-wrapper{flex:1;display:flex;overflow:hidden;border:1px solid rgba(59,130,246,0.5);box-shadow:0 0 8px rgba(59,130,246,0.15);margin:0;}
+
+    /* === EDITOR === */
+    .editor-panel{flex:1;display:flex;flex-direction:column;min-width:200px;overflow:hidden;}
+    .editor-toolbar{display:flex;align-items:center;height:42px;min-height:42px;background:#1e2235;padding:0 8px 0 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+    .editor-tab{display:flex;align-items:center;height:100%;padding:0 18px;font-size:14px;font-weight:500;color:#c9d1d9;background:#141824;cursor:default;user-select:none;border-right:1px solid rgba(255,255,255,0.05);}
+    .toolbar-spacer{flex:1;}
+    .toolbar-actions{display:flex;align-items:center;gap:2px;}
+    .toolbar-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:6px;color:#7c8496;transition:background .15s,color .15s;}
+    .toolbar-btn:hover{background:rgba(255,255,255,0.06);color:#c9d1d9;}
+    .toolbar-btn svg{width:17px;height:17px;}
+    .share-btn{display:flex;align-items:center;gap:6px;padding:0 14px;height:34px;border-radius:6px;color:#c9d1d9;font-size:14px;font-weight:500;transition:background .15s;}
+    .share-btn:hover{background:rgba(255,255,255,0.06);}
+    .share-btn svg{width:15px;height:15px;}
+    .run-btn{display:flex;align-items:center;justify-content:center;padding:0 22px;height:32px;border-radius:7px;background:#2563eb;color:#fff;font-size:14px;font-weight:600;transition:background .15s;margin-left:6px;}
+    .run-btn:hover{background:#1d4ed8;}
+
+    /* Editor Content */
+    .editor-content{flex:1;display:flex;overflow:auto;background:#141824;}
+    .line-numbers{padding:14px 0;text-align:right;user-select:none;color:#4a5068;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;min-width:40px;padding-right:12px;padding-left:14px;background:#141824;flex-shrink:0;}
+    .line-numbers .ln{display:block;}
+    .code-editor-wrapper{flex:1;position:relative;overflow:auto;}
+    .code-highlight{padding:14px 14px 14px 0;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;color:#c9d1d9;white-space:pre;pointer-events:none;position:absolute;top:0;left:0;right:0;bottom:0;}
+    .code-textarea{width:100%;height:100%;padding:14px 14px 14px 0;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;color:transparent;caret-color:#c9d1d9;background:transparent;border:none;outline:none;resize:none;white-space:pre;tab-size:4;position:relative;z-index:1;overflow:auto;}
+
+    /* Syntax Colors — matched to original */
+    .s-cmt{color:#5c6370;}
+    .s-kw{color:#c678dd;}
+    .s-str{color:#98c379;}
+    .s-bi{color:#c678dd;}
+    .s-num{color:#d19a66;}
+    .s-op{color:#56b6c2;}
+    .s-fn{color:#61afef;}
+
+    /* === DIVIDER === */
+    .divider{width:3px;cursor:col-resize;background:rgba(255,255,255,0.05);flex-shrink:0;transition:background .15s;z-index:10;}
+    .divider:hover,.divider.dragging{background:#2563eb;}
+
+    /* === OUTPUT === */
+    .output-panel{width:45%;min-width:200px;display:flex;flex-direction:column;overflow:hidden;}
+    .output-toolbar{display:flex;align-items:center;justify-content:space-between;height:42px;min-height:42px;background:#1e2235;padding:0 14px;border-bottom:1px solid rgba(255,255,255,0.05);}
+    .output-title{font-size:14px;font-weight:500;color:#c9d1d9;}
+    .clear-btn{display:flex;align-items:center;padding:5px 16px;border:1px solid #3d4251;border-radius:6px;color:#c9d1d9;font-size:12px;font-weight:500;background:transparent;transition:background .15s;}
+    .clear-btn:hover{background:rgba(255,255,255,0.05);}
+    .output-content{flex:1;padding:14px 16px;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;color:#c9d1d9;background:#141824;overflow:auto;white-space:pre-wrap;word-break:break-word;}
+    .output-grip{height:18px;display:flex;align-items:center;justify-content:center;background:#141824;}
+    .output-grip-bar{width:36px;height:3px;border-radius:2px;background:#3d4251;}
+
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:8px;height:8px;}
+    ::-webkit-scrollbar-track{background:#141824;}
+    ::-webkit-scrollbar-thumb{background:#2d3344;border-radius:4px;}
+    ::-webkit-scrollbar-thumb:hover{background:#3d4251;}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <div class="header-logo"><span class="p-letter">P</span>rogramiz</div>
+        <span class="header-subtitle">Python Online Compiler</span>
+      </div>
+
+      <!-- Ad Banner -->
+      <div class="ad-banner" id="ad-banner">
+        <span class="ad-info">
+          <svg width="8" height="8" viewBox="0 0 16 16" fill="#aaa"><circle cx="8" cy="8" r="7" fill="none" stroke="#aaa" stroke-width="1.5"/><text x="8" y="12" text-anchor="middle" font-size="10" fill="#aaa">i</text></svg>
+        </span>
+        <button class="ad-close-btn" onclick="document.getElementById('ad-banner').style.display='none'" title="Close">✕</button>
+        <div class="ad-image">
+          <svg viewBox="0 0 64 40" width="64" height="40"><rect width="64" height="40" fill="#1a1a2e"/><circle cx="20" cy="15" r="8" fill="#ff6b35" opacity="0.8"/><circle cx="35" cy="20" r="10" fill="#9933ff" opacity="0.5"/><rect x="8" y="24" width="20" height="3" rx="1" fill="#ffd93d" opacity="0.7"/><rect x="8" y="29" width="14" height="2" rx="1" fill="#ff6b6b" opacity="0.5"/></svg>
+        </div>
+        <div class="ad-text-wrap">
+          <div class="ad-headline">Tell your story like a pro.</div>
+          <div class="ad-subtext">Over 70% off Creative Cloud Pro<br>for students. First year only. Terms apply.</div>
+        </div>
+        <button class="ad-cta">Learn more</button>
+        <div class="ad-brand">
+          <div class="ad-brand-name">Adobe</div>
+          <div class="ad-brand-product">Creative Cloud</div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="code-paste-btn" id="paste-4" title="Load code 4">4</button>
+        <button class="code-paste-btn" id="paste-5" title="Load code 5">5</button>
+        <button class="pro-btn">Programiz PRO ❯</button>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="main-body">
+      <!-- SIDEBAR -->
+      <nav class="sidebar">
+        <!-- Python (active) -->
+        <div class="sidebar-icon active" title="Python">
+          <svg viewBox="0 0 24 24"><path d="M11.9 2c-1.4 0-2.7.1-3.8.4C5.5 3.1 5 4.3 5 5.7V8h7v1H4.7C2.6 9 1 10.7 1 13.5s1.3 4.2 3.3 4.5H6v-2.3c0-2.2 1.9-4.1 4.2-4.2h5.7c1.9 0 3.1-1.3 3.1-3V5.7c0-1.7-1.4-3-3.3-3.4-.9-.2-1.9-.3-3.8-.3zm-3 2.1a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" fill="#3776AB"/><path d="M18.1 9H19v2.2c0 2.2-1.8 4.2-4.2 4.3H9.1c-1.9 0-3.1 1.3-3.1 3v2.8c0 1.7 1.5 2.7 3.2 3.2 2 .5 4 .6 5.7 0 1.2-.4 2.1-1.1 2.1-2V21h-6v-1h8.2c1.8 0 2.5-1.3 3.1-3.2.7-2 .7-3.9 0-5.3C21.7 10 20.6 9 18.1 9zm-3.7 10.9a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" fill="#FFD43B"/></svg>
+        </div>
+        <!-- R -->
+        <div class="sidebar-icon" title="R">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M12 3C7.1 3 3 6.4 3 10.5c0 2.8 1.9 5.3 4.8 6.6L10.5 21h3l-3-4.5c2.4-.3 4.3-1.3 5.5-2.8l3 3.3h3.5l-4.2-4.7c.6-1 .9-2 .9-3.1C19.2 6 15.5 3 12 3zm0 2.5c2.8 0 5 1.8 5 4s-2.2 4-5 4-5-1.8-5-4 2.2-4 5-4z"/></svg>
+        </div>
+        <!-- SQL -->
+        <div class="sidebar-icon" title="SQL">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5c6370" stroke-width="1.5"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v4c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 10v4c0 1.7 3.6 3 8 3s8-1.3 8-3v-4"/><path d="M4 14v4c0 1.7 3.6 3 8 3s8-1.3 8-3v-4"/></svg>
+        </div>
+        <!-- HTML -->
+        <div class="sidebar-icon" title="HTML">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M4.14 3l1.66 17.37L12 22l6.2-1.63L19.86 3H4.14zM17 8H8.36l.24 2.67h8.07l-.73 8.13L12 20.17l-3.94-1.37-.27-3.03h2.6l.14 1.5 1.47.41 1.47-.41.16-1.74H8.15L7.67 8h8.59L17 8z"/></svg>
+        </div>
+        <!-- Download/Save -->
+        <div class="sidebar-icon" title="Download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5c6370" stroke-width="2" stroke-linecap="round"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+        </div>
+        <!-- Kotlin -->
+        <div class="sidebar-icon" title="Kotlin">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><polygon points="2,2 2,22 22,22 12,12 22,2"/></svg>
+        </div>
+        <!-- C -->
+        <div class="sidebar-icon" title="C">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c2.76 0 5.26-1.12 7.07-2.93l-2.83-2.83A6 6 0 1118 12h4c0-5.52-4.48-10-10-10z"/></svg>
+        </div>
+        <!-- C++ -->
+        <div class="sidebar-icon" title="C++">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M10.5 2C5.8 2 2 5.8 2 10.5S5.8 19 10.5 19c2 0 3.9-.7 5.4-1.9l-1.5-1.6A6.5 6.5 0 1117 10.5h-2V12h2v1.5h-2V15h-1v-1.5h-2V12h2v-1.5h2A8.5 8.5 0 0010.5 2z"/><path d="M19 10h1.5v1H19v1.5h-1V11h-1.5v-1H18V8.5h1V10zm4 0h1.5v1H23v1.5h-1V11h-1.5v-1H22V8.5h1V10z"/></svg>
+        </div>
+        <!-- C# -->
+        <div class="sidebar-icon" title="C#">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M10.5 2C5.8 2 2 5.8 2 10.5S5.8 19 10.5 19c2 0 3.9-.7 5.4-1.9l-1.5-1.6A6.5 6.5 0 1117 10.5c0 1.4-.4 2.7-1.2 3.8l1.6 1.5A8.5 8.5 0 0019 10.5C19 5.8 15.2 2 10.5 2z"/><path d="M18 7l.5-1.5h1L20 7l-.5 1.5h-1L18 7zm2 0l.5-1.5h1L22 7l-.5 1.5h-1L20 7zm-1 2l1.5-.5v1L19 10l-1.5-.5v-1L19 9zm0-4l1.5-.5v1L19 6l-1.5-.5v-1L19 5z"/></svg>
+        </div>
+        <!-- JS -->
+        <div class="sidebar-icon" title="JavaScript">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><rect x="2" y="2" width="20" height="20" rx="2" fill="none" stroke="#5c6370" stroke-width="1.5"/><text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="700" font-family="Inter,sans-serif" fill="#5c6370">JS</text></svg>
+        </div>
+        <!-- TS -->
+        <div class="sidebar-icon" title="TypeScript">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><rect x="2" y="2" width="20" height="20" rx="2" fill="none" stroke="#5c6370" stroke-width="1.5"/><text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="700" font-family="Inter,sans-serif" fill="#5c6370">TS</text></svg>
+        </div>
+        <!-- Go -->
+        <div class="sidebar-icon" title="Go">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><text x="12" y="16" text-anchor="middle" font-size="11" font-weight="800" font-family="Inter,sans-serif" fill="#5c6370">GO</text></svg>
+        </div>
+        <!-- Rust -->
+        <div class="sidebar-icon" title="Rust">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><circle cx="12" cy="12" r="9" fill="none" stroke="#5c6370" stroke-width="1.5"/><circle cx="12" cy="4" r="1.2" fill="#5c6370"/><circle cx="5" cy="16" r="1.2" fill="#5c6370"/><circle cx="19" cy="16" r="1.2" fill="#5c6370"/><path d="M8 10h3v2H9v3H7V10zm5 0h3c1.1 0 2 .9 2 2s-.9 2-2 2h-1v1h-2V10zm2 1.5v1h1v-1h-1z" fill="#5c6370"/></svg>
+        </div>
+        <!-- Scala -->
+        <div class="sidebar-icon" title="Scala">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5c6370" stroke-width="1.5" stroke-linecap="round"><path d="M6 4h12M6 8h12M6 12h12M6 16h12M6 20h12"/></svg>
+        </div>
+        <!-- Dart -->
+        <div class="sidebar-icon" title="Dart">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M4.1 4.1s5-2.5 7.6-3.8a.8.8 0 01.6 0c2.6 1.3 7.6 3.8 7.6 3.8s2.6 10.1-4.4 16.3c-1.3 1.1-2.8 1.6-3.5 1.6-.6 0-2.2-.5-3.5-1.6C1.5 14.2 4.1 4.1 4.1 4.1z"/></svg>
+        </div>
+        <!-- Ruby -->
+        <div class="sidebar-icon" title="Ruby">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><path d="M18.5 3L21 8l-9 13L3 8l2.5-5h13zM12 21L4.5 9h15L12 21z"/></svg>
+        </div>
+        <!-- PHP -->
+        <div class="sidebar-icon" title="PHP">
+          <svg viewBox="0 0 24 24" fill="#5c6370"><text x="12" y="15" text-anchor="middle" font-size="8" font-weight="800" font-family="Inter,sans-serif" fill="#5c6370">php</text></svg>
+        </div>
+      </nav>
+
+      <!-- WORKSPACE -->
+      <div class="workspace">
+        <div class="panels-wrapper">
+          <!-- EDITOR -->
+          <div class="editor-panel" id="editor-panel">
+            <div class="editor-toolbar">
+              <div class="editor-tab">main.py</div>
+              <div class="toolbar-spacer"></div>
+              <div class="toolbar-actions">
+                <!-- Fullscreen -->
+                <button class="toolbar-btn" title="Fullscreen">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3"/><path d="M21 8V5a2 2 0 00-2-2h-3"/><path d="M16 21h3a2 2 0 002-2v-3"/><path d="M3 16v3a2 2 0 002 2h3"/></svg>
+                </button>
+                <!-- Theme -->
+                <button class="toolbar-btn" title="Toggle Theme">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                </button>
+                <!-- Share -->
+                <button class="share-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                  Share
+                </button>
+                <!-- Run -->
+                <button class="run-btn" id="run-btn">Run</button>
+              </div>
+            </div>
+            <div class="editor-content">
+              <div class="line-numbers" id="line-numbers"><span class="ln">1</span><span class="ln">2</span><span class="ln">3</span></div>
+              <div class="code-editor-wrapper">
+                <div class="code-highlight" id="code-highlight"></div>
+                <textarea class="code-textarea" id="code-textarea" spellcheck="false"># Online Python compiler (interpreter) to run Python online.
+# Write Python 3 code in this online editor and run it.
+print("Try programiz.pro")</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIVIDER -->
+          <div class="divider" id="divider"></div>
+
+          <!-- OUTPUT -->
+          <div class="output-panel" id="output-panel">
+            <div class="output-toolbar">
+              <span class="output-title">Output</span>
+              <button class="clear-btn" id="clear-btn">Clear</button>
+            </div>
+            <div class="output-content" id="output-content"></div>
+            <div class="output-grip"><div class="output-grip-bar"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Syntax highlighting only (no backend execution)
+    const textarea = document.getElementById('code-textarea');
+    const highlight = document.getElementById('code-highlight');
+    const lineNums = document.getElementById('line-numbers');
+
+    function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+    function hlLine(line){
+      let r='',i=0;
+      while(i<line.length){
+        if(line[i]==='"'||line[i]==="'"){
+          const q=line[i];let e=line.indexOf(q,i+1);if(e===-1)e=line.length-1;
+          r+=`<span class="s-str">${esc(line.substring(i,e+1))}</span>`;i=e+1;
+        }else if(line[i]==='#'){
+          r+=`<span class="s-cmt">${esc(line.substring(i))}</span>`;break;
+        }else if(/[a-zA-Z_]/.test(line[i])){
+          let w='';while(i<line.length&&/\w/.test(line[i]))w+=line[i++];
+          const kw=['and','as','assert','async','await','break','class','continue','def','del','elif','else','except','finally','for','from','global','if','import','in','is','lambda','nonlocal','not','or','pass','raise','return','try','while','with','yield','True','False','None','self'];
+          const bi=['print','input','len','range','int','str','float','list','dict','tuple','set','bool','type','isinstance','enumerate','zip','map','filter','sorted','reversed','abs','max','min','sum','open','super','format'];
+          if(kw.includes(w))r+=`<span class="s-kw">${w}</span>`;
+          else if(bi.includes(w)&&i<line.length&&line[i]==='(')r+=`<span class="s-bi">${w}</span>`;
+          else r+=esc(w);
+        }else if(/\d/.test(line[i])){
+          let n='';while(i<line.length&&/[\d.]/.test(line[i]))n+=line[i++];
+          r+=`<span class="s-num">${n}</span>`;
+        }else if('=+-*/<>!&|%^~'.includes(line[i])){
+          r+=`<span class="s-op">${esc(line[i])}</span>`;i++;
+        }else{r+=esc(line[i]);i++;}
+      }
+      return r;
+    }
+
+    function updateHL(){
+      highlight.innerHTML=textarea.value.split('\n').map(l=>
+        l.trimStart().startsWith('#')?`<span class="s-cmt">${esc(l)}</span>`:hlLine(l)
+      ).join('\n');
+    }
+    function updateLN(){
+      const n=textarea.value.split('\n').length;
+      lineNums.innerHTML=Array.from({length:n},(_,i)=>`<span class="ln">${i+1}</span>`).join('');
+    }
+    function sync(){highlight.scrollTop=textarea.scrollTop;highlight.scrollLeft=textarea.scrollLeft;lineNums.scrollTop=textarea.scrollTop;}
+
+    updateHL();updateLN();
+    textarea.addEventListener('input',()=>{updateHL();updateLN();});
+    textarea.addEventListener('scroll',sync);
+    textarea.addEventListener('keydown',e=>{
+      if(e.key==='Tab'){e.preventDefault();const s=textarea.selectionStart;textarea.value=textarea.value.substring(0,s)+'    '+textarea.value.substring(textarea.selectionEnd);textarea.selectionStart=textarea.selectionEnd=s+4;updateHL();updateLN();}
+    });
+
+    // Clear button
+    document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('output-content').textContent='';});
+
+    // Resize divider
+    let dragging=false;const divider=document.getElementById('divider');const ep=document.getElementById('editor-panel');const op=document.getElementById('output-panel');
+    divider.addEventListener('mousedown',e=>{dragging=true;divider.classList.add('dragging');document.body.style.cursor='col-resize';document.body.style.userSelect='none';e.preventDefault();});
+    document.addEventListener('mousemove',e=>{if(!dragging)return;const c=document.querySelector('.panels-wrapper').getBoundingClientRect();const x=e.clientX-c.left;const ew=Math.max(200,Math.min(x,c.width-200));ep.style.flex='none';ep.style.width=ew+'px';op.style.flex='none';op.style.width=(c.width-ew-3)+'px';});
+    document.addEventListener('mouseup',()=>{if(dragging){dragging=false;divider.classList.remove('dragging');document.body.style.cursor='';document.body.style.userSelect='';}});
+
+    // Sidebar active toggle
+    document.querySelectorAll('.sidebar-icon').forEach(icon=>{icon.addEventListener('click',()=>{document.querySelectorAll('.sidebar-icon').forEach(i=>i.classList.remove('active'));icon.classList.add('active');});});
+
+    // Code paste buttons
+    const code4 = `# Simple Shift Reduce Parser\n\nstack = []\ninput_string = input("Enter input string (end with $): ")\n\n# Example grammar: S -> aSb | ab\n# Valid strings: ab, aabb, aaabbb...\n\ndef check_reduce():\n    global stack\n    # Reduce "ab" to S\n    if len(stack) >= 2 and stack[-2:] == ['a', 'b']:\n        stack = stack[:-2]\n        stack.append('S')\n        print("Reduce: ab -> S")\n\n    # Reduce "aSb" to S\n    if len(stack) >= 3 and stack[-3:] == ['a', 'S', 'b']:\n        stack = stack[:-3]\n        stack.append('S')\n        print("Reduce: aSb -> S")\n\n\ni = 0\nwhile i < len(input_string):\n    # Shift\n    print("Shift:", input_string[i])\n    stack.append(input_string[i])\n    print("Stack:", stack)\n\n    # Try reduce\n    check_reduce()\n\n    i += 1\n\n# Final check\nif stack == ['S', '$'] or stack == ['S']:\n    print("String Accepted")\nelse:\n    print("String Rejected")`;
+
+    const code5 = `# Three Address Code Generator\n\nexpression = input("Enter expression (like a+b*c): ")\n\ntemp_count = 1\nstack = []\n\n# Operator precedence\npriority = {'+':1, '-':1, '*':2, '/':2}\n\noperators = []\noutput = []\n\n# Convert infix to postfix (simple)\nfor ch in expression:\n    if ch.isalnum():\n        output.append(ch)\n    else:\n        while operators and priority.get(ch,0) <= priority.get(operators[-1],0):\n            output.append(operators.pop())\n        operators.append(ch)\n\nwhile operators:\n    output.append(operators.pop())\n\n# Generate 3-address code\nfor ch in output:\n    if ch.isalnum():\n        stack.append(ch)\n    else:\n        op2 = stack.pop()\n        op1 = stack.pop()\n        temp = "T" + str(temp_count)\n        print(temp, "=", op1, ch, op2)\n        stack.append(temp)\n        temp_count += 1`;
+
+    function loadCode(code) {
+      textarea.value = code;
+      updateHL();
+      updateLN();
+    }
+    document.getElementById('paste-4').addEventListener('click', () => loadCode(code4));
+    document.getElementById('paste-5').addEventListener('click', () => loadCode(code5));
+  </script>
+</body>
+</html>

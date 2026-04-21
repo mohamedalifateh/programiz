@@ -1,0 +1,36 @@
+# Three Address Code Generator
+
+expression = input("Enter expression (like a+b*c): ")
+
+temp_count = 1
+stack = []
+
+# Operator precedence
+priority = {'+':1, '-':1, '*':2, '/':2}
+
+operators = []
+output = []
+
+# Convert infix to postfix (simple)
+for ch in expression:
+    if ch.isalnum():
+        output.append(ch)
+    else:
+        while operators and priority.get(ch,0) <= priority.get(operators[-1],0):
+            output.append(operators.pop())
+        operators.append(ch)
+
+while operators:
+    output.append(operators.pop())
+
+# Generate 3-address code
+for ch in output:
+    if ch.isalnum():
+        stack.append(ch)
+    else:
+        op2 = stack.pop()
+        op1 = stack.pop()
+        temp = "T" + str(temp_count)
+        print(temp, "=", op1, ch, op2)
+        stack.append(temp)
+        temp_count += 1
