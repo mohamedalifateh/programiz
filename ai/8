@@ -1,0 +1,56 @@
+# pip install pgmpy
+
+from pgmpy.models import BayesianModel
+from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
+
+# 1. Define the structure of the network
+model = BayesianModel([
+    ('Humidity', 'Cloudy'),
+    ('Temperature', 'Cloudy'),
+    ('Cloudy', 'Rain'),
+    ('Wind', 'Rain')
+])
+
+# 2. Define CPDs (Conditional Probability Distributions)
+cpd_humidity = TabularCPD(variable='Humidity', variable_card=2, values=[[0.4], [0.6]])
+cpd_temperature = TabularCPD(variable='Temperature', variable_card=2, values=[[0.7], [0.3]])
+cpd_wind = TabularCPD(variable='Wind', variable_card=2, values=[[0.6], [0.4]])
+
+cpd_cloudy = TabularCPD(
+    variable='Cloudy', variable_card=2,
+    values=[[0.9, 0.6, 0.7, 0.2], [0.1, 0.4, 0.3, 0.8]],
+    evidence=['Humidity', 'Temperature'], evidence_card=[2, 2]
+)
+
+cpd_rain = TabularCPD(
+    variable='Rain', variable_card=2,
+    values=[[0.95, 0.6, 0.7, 0.2], [0.05, 0.4, 0.3, 0.8]],
+    evidence=['Cloudy', 'Wind'], evidence_card=[2, 2]
+)
+
+# 3. Add CPDs to model
+model.add_cpds(cpd_humidity, cpd_temperature, cpd_wind, cpd_cloudy, cpd_rain)
+
+# 4. Check model and Perform Inference
+assert model.check_model()
+inference = VariableElimination(model)
+
+# Query: Probability of Rain if Humidity=High and Wind=High
+query = inference.query(variables=['Rain'], evidence={'Humidity': 1, 'Wind': 1})
+print("Probability of Rain given High Humidity and High Wind:")
+print(query)
+
+"""
+--- Theory ---
+A Bayesian Network is a probabilistic graphical model that represents variables and their 
+conditional dependencies via a Directed Acyclic Graph (DAG). It allows for 'Inference'—calculating 
+the probability of certain variables given observed evidence (e.g., probability of Rain if it is Cloudy).
+
+--- Algorithm ---
+1. DEFINE Network Structure (Nodes and directed Edges)
+2. SPECIFY Conditional Probability Distributions (CPDs) for each node
+3. ATTACH CPDs to the Model and VALIDATE consistency
+4. CHOOSE Inference Engine (e.g., Variable Elimination)
+5. PROVIDE Evidence (known variables) and QUERY for unknown variable probabilities
+"""

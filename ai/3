@@ -1,0 +1,112 @@
+# pip install networkx matplotlib
+
+import networkx as nx
+import matplotlib.pyplot as plt
+from collections import deque
+
+# 1. Define the Tree Structure (Edges)
+# This establishes parent-child relationships
+edges = [
+    ('A', 'B'), ('A', 'C'), ('A', 'D'),  # Level 0 -> 1
+    ('B', 'E'), ('B', 'F'),              # Level 1 -> 2 (from B)
+    ('C', 'G'),                          # Level 1 -> 2 (from C)
+    ('D', 'H'), ('D', 'I'),              # Level 1 -> 2 (from D)
+    ('E', 'J'), ('E', 'K'),              # Level 2 -> 3 (from E)
+    ('F', 'L'),                          # Level 2 -> 3 (from F)
+    ('H', 'M'), ('H', 'N'),              # Level 2 -> 3 (from H)
+    ('I', 'O')                           # Level 2 -> 3 (from I)
+]
+
+# 2. Create the Directed Graph object
+G = nx.DiGraph()
+G.add_edges_from(edges)
+
+# 3. Define Node Positions (Manual Layout for precise appearance)
+pos = {
+    'A': (0, 0),                         # Root
+    'B': (-2, -1), 'C': (0, -1), 'D': (2, -1),
+    'E': (-3, -2), 'F': (-1.5, -2), 
+    'G': (0, -2), 
+    'H': (1.5, -2), 'I': (3, -2),
+    'J': (-3.5, -3), 'K': (-2.5, -3), 
+    'L': (-1.5, -3),
+    'M': (1, -3), 'N': (2, -3), 
+    'O': (3, -3)
+}
+
+# 4. Define Node Colors
+color_map = []
+for node in G.nodes():
+    if node == 'A': color_map.append('#ff9900')
+    elif node in ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']: color_map.append('#99ccff')
+    else: color_map.append('#99ff99')
+
+# 5. Define the Tree (Adjacency List) for Search
+tree = {
+    'A': ['B', 'C', 'D'],
+    'B': ['E', 'F'],
+    'C': ['G'],
+    'D': ['H', 'I'],
+    'E': ['J', 'K'],
+    'F': ['L'],
+    'G': [],
+    'H': ['M', 'N'],
+    'I': ['O'],
+    'J': [], 'K': [], 'L': [], 'M': [], 'N': [], 'O': []
+}
+
+# --- BFS Implementation ---
+def bfs(graph, start):
+    visited = []
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        visited.append(node)
+        for child in graph[node]:
+            queue.append(child)
+    return visited
+
+# --- DFS Implementation ---
+def dfs(graph, start):
+    visited = []
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        visited.append(node)
+        for child in reversed(graph[node]):
+            stack.append(child)
+    return visited
+
+# --- Execution ---
+print(f"BFS Path: {' -> '.join(bfs(tree, 'A'))}")
+print(f"DFS Path: {' -> '.join(dfs(tree, 'A'))}")
+
+# Draw the Graph
+plt.figure(figsize=(12, 7))
+nx.draw_networkx_nodes(G, pos, node_size=2500, node_color=color_map, edgecolors='#333333', linewidths=2)
+nx.draw_networkx_edges(G, pos, arrows=True, arrowstyle='-|>', arrowsize=20, width=2)
+nx.draw_networkx_labels(G, pos, font_size=15, font_family="sans-serif", font_weight="bold")
+plt.axis('off')
+plt.tight_layout()
+plt.show()
+
+"""
+--- Theory ---
+Tree traversal algorithms visit every node in a tree structure. 
+BFS (Breadth-First Search) explores the tree level-by-level using a FIFO Queue. 
+DFS (Depth-First Search) explores as deep as possible along each branch before backtracking, using a LIFO Stack.
+
+--- BFS Algorithm ---
+1. INITIALIZE Queue with [root]
+2. WHILE Queue IS NOT EMPTY:
+    a. node = Queue.popleft() (Dequeue)
+    b. VISIT node
+    c. Queue.extend(node.children) (Enqueue children)
+
+--- DFS Algorithm ---
+1. INITIALIZE Stack with [root]
+2. WHILE Stack IS NOT EMPTY:
+    a. node = Stack.pop() (Pop)
+    b. VISIT node
+    c. Stack.extend(reversed(node.children)) (Push children)
+"""

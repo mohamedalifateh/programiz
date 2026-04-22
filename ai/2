@@ -1,0 +1,76 @@
+# pip install heapq (heapq is a built-in module, no installation needed)
+
+# Route Finding (Navigation System)
+# State Space Formulation Implementation using Dijkstra's Algorithm
+
+import heapq
+
+# Graph representation (City Map)
+# Each city has neighbors with distances
+graph = {
+    'A': {'B': 4, 'C': 2},
+    'B': {'A': 4, 'D': 5, 'E': 10},
+    'C': {'A': 2, 'D': 8},
+    'D': {'B': 5, 'C': 8, 'E': 2, 'F': 6},
+    'E': {'B': 10, 'D': 2, 'F': 3},
+    'F': {'D': 6, 'E': 3}
+}
+
+# Initial State
+start_city = 'A'
+
+# Goal State
+goal_city = 'F'
+
+# Dijkstra Algorithm for shortest path
+def route_finding(graph, start, goal):
+    # Priority queue: (path_cost, current_city, path)
+    pq = [(0, start, [start])]
+    visited = set()
+
+    while pq:
+        cost, city, path = heapq.heappop(pq)
+
+        # Goal Test
+        if city == goal:
+            return path, cost
+
+        if city in visited:
+            continue
+        visited.add(city)
+
+        # Actions: Travel to neighboring connected cities
+        for neighbor, distance in graph[city].items():
+            if neighbor not in visited:
+                new_cost = cost + distance   # Path Cost calculation
+                heapq.heappush(pq, (new_cost, neighbor, path + [neighbor]))
+
+    return None, float("inf")
+
+
+# Run the program
+path, total_cost = route_finding(graph, start_city, goal_city)
+
+print("Start City:", start_city)
+print("Destination City:", goal_city)
+print("Best Route:", " -> ".join(path))
+print("Total Path Cost (Distance):", total_cost)
+
+"""
+--- Theory ---
+Dijkstra's Algorithm is used for finding the shortest paths between nodes in a graph. 
+It uses a greedy approach and a priority queue to explore the closest unvisited nodes first, 
+ensuring that the first time a goal is reached, it is via the shortest possible path.
+
+--- Algorithm ---
+1. INITIALIZE PriorityQueue with (cost=0, start_node)
+2. CREATE empty visited_set to track explored nodes
+3. WHILE PriorityQueue IS NOT EMPTY:
+    a. POP (current_cost, current_node) with the SMALLEST cost
+    b. IF current_node == goal_node: RETURN success and path
+    c. IF current_node IN visited_set: CONTINUE
+    d. MARK current_node as VISITED (add to set)
+    e. FOR each neighbor of current_node:
+        i. CALCULATE new_cost = current_cost + distance(current_node, neighbor)
+        ii. PUSH (new_cost, neighbor) into PriorityQueue
+"""

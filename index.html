@@ -58,7 +58,7 @@
 
     /* === WORKSPACE === */
     .workspace{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-    .panels-wrapper{flex:1;display:flex;overflow:hidden;border:1px solid rgba(59,130,246,0.5);box-shadow:0 0 8px rgba(59,130,246,0.15);margin:0;}
+    .panels-wrapper{flex:1;display:flex;overflow:hidden;border:1px solid rgba(59,130,246,0.3);box-shadow:0 0 12px rgba(0,0,0,0.2);margin:0;}
 
     /* === EDITOR === */
     .editor-panel{flex:1;display:flex;flex-direction:column;min-width:200px;overflow:hidden;}
@@ -75,29 +75,37 @@
     .run-btn{display:flex;align-items:center;justify-content:center;padding:0 22px;height:32px;border-radius:7px;background:#2563eb;color:#fff;font-size:14px;font-weight:600;transition:background .15s;margin-left:6px;}
     .run-btn:hover{background:#1d4ed8;}
 
-    /* Editor Content */
-    .editor-content{flex:1;display:flex;overflow:auto;background:#141824;}
-    .line-numbers{padding:14px 0;text-align:right;user-select:none;color:#4a5068;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;min-width:40px;padding-right:12px;padding-left:14px;background:#141824;flex-shrink:0;}
-    .line-numbers .ln{display:block;}
-    .code-editor-wrapper{flex:1;position:relative;overflow:auto;}
-    .code-highlight{padding:14px 14px 14px 0;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;color:#c9d1d9;white-space:pre;pointer-events:none;position:absolute;top:0;left:0;right:0;bottom:0;}
-    .code-textarea{width:100%;height:100%;padding:14px 14px 14px 0;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;color:transparent;caret-color:#c9d1d9;background:transparent;border:none;outline:none;resize:none;white-space:pre;tab-size:4;position:relative;z-index:1;overflow:auto;}
-
-    /* Syntax Colors — matched to original */
-    .s-cmt{color:#5c6370;}
-    .s-kw{color:#c678dd;}
-    .s-str{color:#98c379;}
-    .s-bi{color:#c678dd;}
-    .s-num{color:#d19a66;}
-    .s-op{color:#56b6c2;}
-    .s-fn{color:#61afef;}
+    .editor-content{flex:1;display:flex;position:relative;overflow:hidden;background:#141824;}
+    .line-numbers{width:56px;padding:14px 0;background:#141824;color:#4b5263;text-align:right;font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;user-select:none;border-right:1px solid rgba(255,255,255,0.05);overflow:hidden;display:flex;flex-direction:column;flex-shrink:0;}
+    .ln{display:block;padding-right:12px;height:21px;}
+    .code-editor-wrapper{flex:1;position:relative;overflow:hidden;background:#141824;}
+    
+    .code-textarea, .code-highlight{
+      position:absolute;top:0;left:0;width:100%;height:100%;
+      padding:14px 16px;margin:0;border:none;outline:none;
+      font-family:'Source Code Pro',monospace;font-size:14px;line-height:21px;
+      tab-size:4;box-sizing:border-box;
+      white-space:pre;word-wrap:normal;
+    }
+    
+    .code-textarea{
+      color:transparent;caret-color:#fff;resize:none;z-index:2;
+      background:transparent;overflow:auto;
+    }
+    .code-highlight{
+      color:#c9d1d9;z-index:1;pointer-events:none;
+      background:transparent;overflow:hidden;
+    }
+    
+    /* Syntax colors */
+    .s-kw{color:#ff7b72;} .s-bi{color:#d2a8ff;} .s-str{color:#a5d6ff;} .s-num{color:#79c0ff;} .s-cmt{color:#8b949e;} .s-op{color:#ff7b72;}
 
     /* === DIVIDER === */
     .divider{width:3px;cursor:col-resize;background:rgba(255,255,255,0.05);flex-shrink:0;transition:background .15s;z-index:10;}
     .divider:hover,.divider.dragging{background:#2563eb;}
 
     /* === OUTPUT === */
-    .output-panel{width:45%;min-width:200px;display:flex;flex-direction:column;overflow:hidden;}
+    .output-panel{width:45%;min-width:200px;display:flex;flex-direction:column;overflow:hidden;background:#141824;}
     .output-toolbar{display:flex;align-items:center;justify-content:space-between;height:42px;min-height:42px;background:#1e2235;padding:0 14px;border-bottom:1px solid rgba(255,255,255,0.05);}
     .output-title{font-size:14px;font-weight:500;color:#c9d1d9;}
     .clear-btn{display:flex;align-items:center;padding:5px 16px;border:1px solid #3d4251;border-radius:6px;color:#c9d1d9;font-size:12px;font-weight:500;background:transparent;transition:background .15s;}
@@ -106,11 +114,22 @@
     .output-grip{height:18px;display:flex;align-items:center;justify-content:center;background:#141824;}
     .output-grip-bar{width:36px;height:3px;border-radius:2px;background:#3d4251;}
 
-    /* Scrollbar */
-    ::-webkit-scrollbar{width:8px;height:8px;}
+    /* Scrollbar Styling - Premium Dark Mode */
+    ::-webkit-scrollbar{width:10px;height:10px;}
     ::-webkit-scrollbar-track{background:#141824;}
-    ::-webkit-scrollbar-thumb{background:#2d3344;border-radius:4px;}
-    ::-webkit-scrollbar-thumb:hover{background:#3d4251;}
+    ::-webkit-scrollbar-thumb{background:#30363d;border-radius:5px;border:2px solid #141824;}
+    ::-webkit-scrollbar-thumb:hover{background:#484f58;}
+    
+    .code-textarea::-webkit-scrollbar{width:12px;height:12px;}
+    .code-textarea::-webkit-scrollbar-thumb{background:#30363d;border-radius:6px;border:3px solid #141824;}
+    .code-textarea::-webkit-scrollbar-thumb:hover{background:#484f58;}
+    
+    /* Hide highlight scrollbars but keep sync */
+    .code-highlight::-webkit-scrollbar{display:none;}
+    .line-numbers::-webkit-scrollbar{display:none;}
+    .sidebar::-webkit-scrollbar{display:none;}
+
+
   </style>
 </head>
 <body>
@@ -143,8 +162,9 @@
       </div>
 
       <div class="header-right">
-        <button class="code-paste-btn" id="paste-4" title="Load code 4">4</button>
-        <button class="code-paste-btn" id="paste-5" title="Load code 5">5</button>
+        <button class="code-paste-btn" id="paste-2" title="Load Route Finding">2</button>
+        <button class="code-paste-btn" id="paste-3" title="Load Tree Search">3</button>
+        <button class="code-paste-btn" id="paste-8" title="Load Bayesian Network">8</button>
         <button class="pro-btn">Programiz PRO ❯</button>
       </div>
     </header>
@@ -340,18 +360,276 @@ print("Try programiz.pro")</textarea>
     // Sidebar active toggle
     document.querySelectorAll('.sidebar-icon').forEach(icon=>{icon.addEventListener('click',()=>{document.querySelectorAll('.sidebar-icon').forEach(i=>i.classList.remove('active'));icon.classList.add('active');});});
 
-    // Code paste buttons
-    const code4 = `# Simple Shift Reduce Parser\n\nstack = []\ninput_string = input("Enter input string (end with $): ")\n\n# Example grammar: S -> aSb | ab\n# Valid strings: ab, aabb, aaabbb...\n\ndef check_reduce():\n    global stack\n    # Reduce "ab" to S\n    if len(stack) >= 2 and stack[-2:] == ['a', 'b']:\n        stack = stack[:-2]\n        stack.append('S')\n        print("Reduce: ab -> S")\n\n    # Reduce "aSb" to S\n    if len(stack) >= 3 and stack[-3:] == ['a', 'S', 'b']:\n        stack = stack[:-3]\n        stack.append('S')\n        print("Reduce: aSb -> S")\n\n\ni = 0\nwhile i < len(input_string):\n    # Shift\n    print("Shift:", input_string[i])\n    stack.append(input_string[i])\n    print("Stack:", stack)\n\n    # Try reduce\n    check_reduce()\n\n    i += 1\n\n# Final check\nif stack == ['S', '$'] or stack == ['S']:\n    print("String Accepted")\nelse:\n    print("String Rejected")`;
-
-    const code5 = `# Three Address Code Generator\n\nexpression = input("Enter expression (like a+b*c): ")\n\ntemp_count = 1\nstack = []\n\n# Operator precedence\npriority = {'+':1, '-':1, '*':2, '/':2}\n\noperators = []\noutput = []\n\n# Convert infix to postfix (simple)\nfor ch in expression:\n    if ch.isalnum():\n        output.append(ch)\n    else:\n        while operators and priority.get(ch,0) <= priority.get(operators[-1],0):\n            output.append(operators.pop())\n        operators.append(ch)\n\nwhile operators:\n    output.append(operators.pop())\n\n# Generate 3-address code\nfor ch in output:\n    if ch.isalnum():\n        stack.append(ch)\n    else:\n        op2 = stack.pop()\n        op1 = stack.pop()\n        temp = "T" + str(temp_count)\n        print(temp, "=", op1, ch, op2)\n        stack.append(temp)\n        temp_count += 1`;
-
-    function loadCode(code) {
-      textarea.value = code;
-      updateHL();
-      updateLN();
+    function loadCode(id) {
+      const template = document.getElementById('template-' + id);
+      if (template) {
+        textarea.value = template.textContent.trim();
+        updateHL();
+        updateLN();
+      }
     }
-    document.getElementById('paste-4').addEventListener('click', () => loadCode(code4));
-    document.getElementById('paste-5').addEventListener('click', () => loadCode(code5));
+    document.getElementById('paste-2').addEventListener('click', () => loadCode('2'));
+    document.getElementById('paste-3').addEventListener('click', () => loadCode('3'));
+    document.getElementById('paste-8').addEventListener('click', () => loadCode('8'));
   </script>
+
+  <!-- Code Templates (Hidden) -->
+  <div style="display:none;">
+    <pre id="template-2"># Online Python compiler (interpreter) to run Python online.
+# Write Python 3 code in this online editor and run it.
+
+# pip install heapq (heapq is a built-in module, no installation needed)
+
+# Route Finding (Navigation System)
+# State Space Formulation Implementation using Dijkstra's Algorithm
+
+import heapq
+
+# Graph representation (City Map)
+# Each city has neighbors with distances
+graph = {
+    'A': {'B': 4, 'C': 2},
+    'B': {'A': 4, 'D': 5, 'E': 10},
+    'C': {'A': 2, 'D': 8},
+    'D': {'B': 5, 'C': 8, 'E': 2, 'F': 6},
+    'E': {'B': 10, 'D': 2, 'F': 3},
+    'F': {'D': 6, 'E': 3}
+}
+
+# Initial State
+start_city = 'A'
+
+# Goal State
+goal_city = 'F'
+
+# Dijkstra Algorithm for shortest path
+def route_finding(graph, start, goal):
+    # Priority queue: (path_cost, current_city, path)
+    pq = [(0, start, [start])]
+    visited = set()
+
+    while pq:
+        cost, city, path = heapq.heappop(pq)
+
+        # Goal Test
+        if city == goal:
+            return path, cost
+
+        if city in visited:
+            continue
+        visited.add(city)
+
+        # Actions: Travel to neighboring connected cities
+        for neighbor, distance in graph[city].items():
+            if neighbor not in visited:
+                new_cost = cost + distance   # Path Cost calculation
+                heapq.heappush(pq, (new_cost, neighbor, path + [neighbor]))
+
+    return None, float("inf")
+
+
+# Run the program
+path, total_cost = route_finding(graph, start_city, goal_city)
+
+print("Start City:", start_city)
+print("Destination City:", goal_city)
+print("Best Route:", " -> ".join(path))
+print("Total Path Cost (Distance):", total_cost)
+
+"""
+--- Theory ---
+Dijkstra's Algorithm is used for finding the shortest paths between nodes in a graph. 
+It uses a greedy approach and a priority queue to explore the closest unvisited nodes first, 
+ensuring that the first time a goal is reached, it is via the shortest possible path.
+
+--- Algorithm ---
+1. INITIALIZE PriorityQueue with (cost=0, start_node)
+2. CREATE empty visited_set to track explored nodes
+3. WHILE PriorityQueue IS NOT EMPTY:
+    a. POP (current_cost, current_node) with the SMALLEST cost
+    b. IF current_node == goal_node: RETURN success and path
+    c. IF current_node IN visited_set: CONTINUE
+    d. MARK current_node as VISITED (add to set)
+    e. FOR each neighbor of current_node:
+        i. CALCULATE new_cost = current_cost + distance(current_node, neighbor)
+        ii. PUSH (new_cost, neighbor) into PriorityQueue
+"""</pre>
+
+    <pre id="template-3"># Online Python compiler (interpreter) to run Python online.
+# Write Python 3 code in this online editor and run it.
+
+# pip install networkx matplotlib
+
+import networkx as nx
+import matplotlib.pyplot as plt
+from collections import deque
+
+# 1. Define the Tree Structure (Edges)
+# This establishes parent-child relationships
+edges = [
+    ('A', 'B'), ('A', 'C'), ('A', 'D'),  # Level 0 -> 1
+    ('B', 'E'), ('B', 'F'),              # Level 1 -> 2 (from B)
+    ('C', 'G'),                          # Level 1 -> 2 (from C)
+    ('D', 'H'), ('D', 'I'),              # Level 1 -> 2 (from D)
+    ('E', 'J'), ('E', 'K'),              # Level 2 -> 3 (from E)
+    ('F', 'L'),                          # Level 2 -> 3 (from F)
+    ('H', 'M'), ('H', 'N'),              # Level 2 -> 3 (from H)
+    ('I', 'O')                           # Level 2 -> 3 (from I)
+]
+
+# 2. Create the Directed Graph object
+G = nx.DiGraph()
+G.add_edges_from(edges)
+
+# 3. Define Node Positions (Manual Layout for precise appearance)
+pos = {
+    'A': (0, 0),                         # Root
+    'B': (-2, -1), 'C': (0, -1), 'D': (2, -1),
+    'E': (-3, -2), 'F': (-1.5, -2), 
+    'G': (0, -2), 
+    'H': (1.5, -2), 'I': (3, -2),
+    'J': (-3.5, -3), 'K': (-2.5, -3), 
+    'L': (-1.5, -3),
+    'M': (1, -3), 'N': (2, -3), 
+    'O': (3, -3)
+}
+
+# 4. Define Node Colors
+color_map = []
+for node in G.nodes():
+    if node == 'A': color_map.append('#ff9900')
+    elif node in ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']: color_map.append('#99ccff')
+    else: color_map.append('#99ff99')
+
+# 5. Define the Tree (Adjacency List) for Search
+tree = {
+    'A': ['B', 'C', 'D'],
+    'B': ['E', 'F'],
+    'C': ['G'],
+    'D': ['H', 'I'],
+    'E': ['J', 'K'],
+    'F': ['L'],
+    'G': [],
+    'H': ['M', 'N'],
+    'I': ['O'],
+    'J': [], 'K': [], 'L': [], 'M': [], 'N': [], 'O': []
+}
+
+# --- BFS Implementation ---
+def bfs(graph, start):
+    visited = []
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        visited.append(node)
+        for child in graph[node]:
+            queue.append(child)
+    return visited
+
+# --- DFS Implementation ---
+def dfs(graph, start):
+    visited = []
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        visited.append(node)
+        for child in reversed(graph[node]):
+            stack.append(child)
+    return visited
+
+# --- Execution ---
+print(f"BFS Path: {' -> '.join(bfs(tree, 'A'))}")
+print(f"DFS Path: {' -> '.join(dfs(tree, 'A'))}")
+
+# Draw the Graph
+plt.figure(figsize=(12, 7))
+nx.draw_networkx_nodes(G, pos, node_size=2500, node_color=color_map, edgecolors='#333333', linewidths=2)
+nx.draw_networkx_edges(G, pos, arrows=True, arrowstyle='-|>', arrowsize=20, width=2)
+nx.draw_networkx_labels(G, pos, font_size=15, font_family="sans-serif", font_weight="bold")
+plt.axis('off')
+plt.tight_layout()
+plt.show()
+
+"""
+--- Theory ---
+Tree traversal algorithms visit every node in a tree structure. 
+BFS (Breadth-First Search) explores the tree level-by-level using a FIFO Queue. 
+DFS (Depth-First Search) explores as deep as possible along each branch before backtracking, using a LIFO Stack.
+
+--- BFS Algorithm ---
+1. INITIALIZE Queue with [root]
+2. WHILE Queue IS NOT EMPTY:
+    a. node = Queue.popleft() (Dequeue)
+    b. VISIT node
+    c. Queue.extend(node.children) (Enqueue children)
+
+--- DFS Algorithm ---
+1. INITIALIZE Stack with [root]
+2. WHILE Stack IS NOT EMPTY:
+    a. node = Stack.pop() (Pop)
+    b. VISIT node
+    c. Stack.extend(reversed(node.children)) (Push children)
+"""</pre>
+
+    <pre id="template-8"># Online Python compiler (interpreter) to run Python online.
+# Write Python 3 code in this online editor and run it.
+
+# pip install pgmpy
+
+from pgmpy.models import BayesianModel
+from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
+
+# 1. Define the structure of the network
+model = BayesianModel([
+    ('Humidity', 'Cloudy'),
+    ('Temperature', 'Cloudy'),
+    ('Cloudy', 'Rain'),
+    ('Wind', 'Rain')
+])
+
+# 2. Define CPDs (Conditional Probability Distributions)
+cpd_humidity = TabularCPD(variable='Humidity', variable_card=2, values=[[0.4], [0.6]])
+cpd_temperature = TabularCPD(variable='Temperature', variable_card=2, values=[[0.7], [0.3]])
+cpd_wind = TabularCPD(variable='Wind', variable_card=2, values=[[0.6], [0.4]])
+
+cpd_cloudy = TabularCPD(
+    variable='Cloudy', variable_card=2,
+    values=[[0.9, 0.6, 0.7, 0.2], [0.1, 0.4, 0.3, 0.8]],
+    evidence=['Humidity', 'Temperature'], evidence_card=[2, 2]
+)
+
+cpd_rain = TabularCPD(
+    variable='Rain', variable_card=2,
+    values=[[0.95, 0.6, 0.7, 0.2], [0.05, 0.4, 0.3, 0.8]],
+    evidence=['Cloudy', 'Wind'], evidence_card=[2, 2]
+)
+
+# 3. Add CPDs to model
+model.add_cpds(cpd_humidity, cpd_temperature, cpd_wind, cpd_cloudy, cpd_rain)
+
+# 4. Check model and Perform Inference
+assert model.check_model()
+inference = VariableElimination(model)
+
+# Query: Probability of Rain if Humidity=High and Wind=High
+query = inference.query(variables=['Rain'], evidence={'Humidity': 1, 'Wind': 1})
+print("Probability of Rain given High Humidity and High Wind:")
+print(query)
+
+"""
+--- Theory ---
+A Bayesian Network is a probabilistic graphical model that represents variables and their 
+conditional dependencies via a Directed Acyclic Graph (DAG). It allows for 'Inference'—calculating 
+the probability of certain variables given observed evidence (e.g., probability of Rain if it is Cloudy).
+
+--- Algorithm ---
+1. DEFINE Network Structure (Nodes and directed Edges)
+2. SPECIFY Conditional Probability Distributions (CPDs) for each node
+3. ATTACH CPDs to the Model and VALIDATE consistency
+4. CHOOSE Inference Engine (e.g., Variable Elimination)
+5. PROVIDE Evidence (known variables) and QUERY for unknown variable probabilities
+"""</pre>
+  </div>
 </body>
 </html>
