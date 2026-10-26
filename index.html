@@ -360,13 +360,41 @@ print("Try programiz.pro")</textarea>
     // Sidebar active toggle
     document.querySelectorAll('.sidebar-icon').forEach(icon=>{icon.addEventListener('click',()=>{document.querySelectorAll('.sidebar-icon').forEach(i=>i.classList.remove('active'));icon.classList.add('active');});});
 
+    let pendingCode = null;
+    document.addEventListener('keydown', e => {
+      if (!pendingCode || e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta' || e.ctrlKey || e.altKey || e.metaKey) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (pendingCode.visibleLength >= pendingCode.text.length) return;
+
+      const nextWord = /\S+\s*/g;
+      nextWord.lastIndex = pendingCode.visibleLength;
+      const match = nextWord.exec(pendingCode.text);
+      if (!match) return;
+
+      pendingCode.visibleLength = nextWord.lastIndex;
+      textarea.value = pendingCode.text.slice(0, pendingCode.visibleLength);
+      textarea.selectionStart = textarea.selectionEnd = pendingCode.visibleLength;
+      updateHL();
+      updateLN();
+    }, true);
+
     function loadCode(id) {
       const template = document.getElementById('template-' + id);
-      if (template) {
-        textarea.value = template.textContent.trim();
+      if (!template) {
+        throw new Error(`Code template not found: ${id}`);
+      }
+
+      if (pendingCode && pendingCode.id === id) {
+        textarea.value = pendingCode.text;
+        pendingCode = null;
         updateHL();
         updateLN();
+        return;
       }
+
+      pendingCode = { id, text: template.textContent.trim(), visibleLength: 0 };
     }
     document.getElementById('paste-2').addEventListener('click', () => loadCode('2'));
     document.getElementById('paste-3').addEventListener('click', () => loadCode('3'));
